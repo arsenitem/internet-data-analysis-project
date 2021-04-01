@@ -37,16 +37,19 @@ def fecth_ftx(symbol):
 def fetch_bittrex(symbol):
     return bittrex.fetch_ticker(symbol)
 
+def fetch_markets(symbol):
+    ticker_binance = fetch_binance(symbol)
+    ticker_kraken = fetch_kraken(symbol)
+    ticker_ftx = fecth_ftx(symbol)
+    data = {'binance': ticker_binance, 'kraken': ticker_kraken, 'ftx': ticker_ftx}
+    js = json.dumps(data)
+    return js
+
 async def echo(websocket, path):
     async for message in websocket:
-        while True:
-            ticker_binance = fetch_binance(message)
-            ticker_kraken = fetch_kraken(message)
-            ticker_ftx = fecth_ftx(message)
-            data = {'binance': ticker_binance, 'kraken': ticker_kraken, 'ftx': ticker_ftx}
-            js = json.dumps(data)
-            
-            await websocket.send(js)
+        print(message)
+        js = fetch_markets(message)
+        await websocket.send(js)
 
 asyncio.get_event_loop().run_until_complete(
     websockets.serve(echo, 'localhost', 8765))
