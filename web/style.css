@@ -1,0 +1,8 @@
+#container {
+    width: 1400px;
+    margin: auto;
+}
+#name {
+    width: 200px;
+    float: left;
+}
