@@ -10,20 +10,27 @@ socket.onopen = function() {
 
   document.getElementById("btn").addEventListener("click", function() {
     symbol = document.getElementById("select-symbol").value
-    binance_chart.setData()
-    k_chart.setData()
-    ftx_chart.setData()
+   
     socket.send(symbol);
   })
   
 }
 
+function clearData() {
+  binance_chart.setData()
+  k_chart.setData()
+  ftx_chart.setData()
+}
+
 socket.onmessage = function(event) {
   console.log("received message")
-   let data = JSON.parse(event.data)
-   binance_chart.update(data.binance)
-   k_chart.update(data.kraken)
-   ftx_chart.update(data.ftx)
-   socket.send(symbol);
+    let data = JSON.parse(event.data)
+    binance_chart.update(data.binance)
+    k_chart.update(data.kraken)
+    ftx_chart.update(data.ftx)
+    if (data.binance.symbol !== symbol) {
+      clearData()
+    }
+    socket.send(symbol);
 };
 
